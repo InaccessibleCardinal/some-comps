@@ -8,20 +8,20 @@ import React from 'react';
 //import {listWithDataService, ListFromData} from './components/hocExample';
 //some redux:
 import UsersWithRedux from './containers/UsersWithRedux';
+import PostsWithRedux from './containers/PostsWithRedux';
 
 export default class App extends React.Component {
 
     render() {
         
         return (
-            <UsersWithRedux />      
+            <div>
+                <UsersWithRedux />    
+                <PostsWithRedux />
+            </div>
         );
     }
 }
-
-
-
-
 
 
 
