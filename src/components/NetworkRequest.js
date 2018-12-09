@@ -178,16 +178,19 @@ export class NetworkRequest3 extends React.Component {
                 <p key={p.id}>{p.title}</p>
             );
         });
-        return (loading) ? 
-            (
+        if (loading) {
+            return (
                 <p>Loading...I'm a spinner...</p>
-            ) :
-            (
+            );
+        } else {
+            return (
                 <div>
                     <h1>Posts: </h1>
                     {postsMarkup}
                     {error && <p>{error}</p>}
                 </div>
             );
+        }
+
     }
 }
