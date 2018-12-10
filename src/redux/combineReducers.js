@@ -10,7 +10,7 @@ const rootReducer = combineReducers({
 
 let middleware = [applyMiddleware(thunk)];
 
-if (typeof window !== 'undefined' && window.window.__REDUX_DEVTOOLS_EXTENSION__) {
+if (typeof window !== 'undefined' && window__REDUX_DEVTOOLS_EXTENSION__) {
     middleware.push(window.__REDUX_DEVTOOLS_EXTENSION__());
 }
 
