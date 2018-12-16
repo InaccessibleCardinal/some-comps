@@ -1,82 +1,152 @@
 import React from 'react';
 import haxios from '../haxios';
 
-export function listWithDataService(Comp, serviceConfig) {
-    let {url, keysDesired} = serviceConfig;
-
+export function withService(WrappedComponent, config, url) {
+    
     return class extends React.Component {
-        
         constructor(props) {
             super(props);
-            this.state = {data: null, keysDesired: null};
-            this.selectItem = this.selectItem.bind(this);
+            this.state = {loading: true, data: null};
         }
-
         componentDidMount() {
-            
             haxios.get(url)
-                .then((d) => {
-                    this.setState({data: d, keysDesired});
-                })
-                .catch((e) => {
-                    console.log('Error: ', e)
-                });
+            .then((r) => this.setState({loading: false, data: r.data}))
+            .catch((e) => console.log(e));
         }
-    
-        selectItem(event) { //target->id
-            let id = event.target.id.replace('item_', '');
-            let selected = this.state.data.find((o) => o.id.toString() === id);
-            console.log('selected: ', selected);
-        }
-
         render() {
-            let {data, keysDesired} = this.state;
-    
-            if (data) {
+            let {loading, data} = this.state;
+            if (loading) {
                 return (
-                    <Comp 
-                        data={data} 
-                        keysDesired={keysDesired}
-                        selectItem={this.selectItem} 
-                    /> 
+                    <div><p>Loading...</p></div>
                 );
-            } else {
-                return (<p>Loading...</p>)
+            }else {
+                let dynamicProps = {};
+                dynamicProps[config.dataName] = data;
+                let otherProps = {a: 42};
+                return (
+                    <WrappedComponent {...dynamicProps} {...otherProps} />
+                );
             }
+            
         }
-    }  
+    }
 }
 
-export function ListFromData({data, keysDesired, selectItem}) {
-    let dataToUse = data.map((o) => {
-        let obj = {id: o.id};
-        keysDesired.forEach((k) => {
-            obj[k] = o[k];
-        });
-        return obj;
-    });
-    let dataMarkup = dataToUse.map((o) => {
+
+export function ShowUsers({users}) {
+    
+    let usersMarkup = users.map((u) => {
         return (
-            <div 
-                onClick={selectItem ? selectItem : null} 
-                style={{border: '1px solid', margin: '1em', padding: '1em', cursor: 'pointer'}} 
-                key={o.id}
-                id={`item_${o.id}`}
-            >
-            {
-                Object.keys(o).filter((k) => k !== 'id').map((k) => {
-                    return (
-                        <p style={{pointerEvents: 'none'}} key={o[k]}>{o[k]}</p>
-                    );
-                })
-            }
+            <div key={u.id}>
+                <p>{u.name}</p>
+                <p>{u.email}</p>
             </div>
         );
- 
     });
     return (
         <div>
-            {dataMarkup}
+            <h1>Users:</h1>
+            {usersMarkup}
         </div>
     );
+}
+
+export function ShowPosts({posts}) {
+    let postsMarkup = posts.map((p) => {
+        return (
+            <div key={p.id}>
+                <p>{p.title}</p>
+            </div>
+        );
+    });
+    return (
+        <div>
+            <h1>Posts:</h1>
+            {postsMarkup}
+        </div>
+    );
+}
+
+
+function Sample(props) {
+    let propsTable = Object.keys(props).map((key, i) => {
+        return (
+            <p key={i}>{key + ': ' + props[key]}</p>
+        );
+    });
+    return (
+        <div>
+            {propsTable}
+        </div>
+    );
+}
+
+
+//connect(fn)(Component) example
+function connect(state, mapper) {
+    return function(Comp) {
+        return function() {
+            return <Comp {...mapper(state)} />;
+        }
+    }
+}
+
+
+let state = {a: 42, b: 'some text', c: 'more', d: '99 problems'};
+function mapState(state) {
+    return {
+        a: state.a,
+        b: state.b,
+        c: state.c
+    }
+}
+export const WrappedSample = connect(state, mapState)(Sample);
+
+
+export function Menu({items}) {
+    let menuItems = items.map((item) => {
+        return (
+            <li key={item.id}>
+                <a href={item.href}>{item.value}</a>
+            </li>
+        );
+    });
+    return (
+        <ul>
+            {menuItems}
+        </ul>
+    );
+}
+
+let myItems = [
+    {id: 1, href: '#one', value: 'Value one'},
+    {id: 2, href: '#too', value: 'Value two'},
+    {id: 3, href: '#tree', value: 'Value 3'}
+]
+
+export function withShowHide(Comp) {
+    return class extends React.Component {
+        state = {showing: false, items: myItems};
+        toggleShowing = () => { 
+            this.setState((previousState) => {
+                return {showing: !previousState.showing};
+            });
+        }
+        render() {
+            let {showing} = this.state;
+            
+            return (showing) ? 
+                <div>
+                    <button onClick={this.toggleShowing}>
+                        Hide
+                    </button>
+                    <Comp items={this.state.items} />
+                </div> :
+                <div>
+                    <button onClick={this.toggleShowing}>
+                        Show
+                    </button>
+                </div>;
+        }
+    }
 }

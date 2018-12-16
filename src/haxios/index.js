@@ -7,7 +7,8 @@ function haxiosMaker() {
             x.onreadystatechange = () => {
                 if (x.readyState === 4) {
                     if (x.status < 399) {
-                        resolve(JSON.parse(x.responseText));
+                        let d = JSON.parse(x.responseText);
+                        resolve({data: d});
                     } else {
                         let e = {
                             message: `Request failed with status: ${x.status}`,
