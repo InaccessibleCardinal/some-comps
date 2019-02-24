@@ -7,53 +7,64 @@ export default class Accordion extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            views: accordionContent,
-            expandedView: null
+            accordionContent: accordionContent,
+            expandedPanel: null
         }
-        this.expandView = this.expandView.bind(this);
+        this.expandPanel = this.expandPanel.bind(this);    
     }
 
-    expandView(e) {
-        let {target} = e;
-        let {views} = this.state;
-        let nextExpandedView = views.find((v) => v.id === target.id);
+    expandPanel(event) {
+        let {target} = event;
+        let panelToExpand = this.state.accordionContent.find((panel) => {
+            return (
+                panel.id === target.id.replace('acc-header_', '')
+            );
+
+        });
         this.setState({
-            expandedView: nextExpandedView
+            expandedPanel: panelToExpand
         });
     }
 
     render() {
-        let {views, expandedView} = this.state;
-        let viewsMarkup = views.map((v) => {
 
-            let {id, content, header} = v;
-            let expanded = expandedView && expandedView.id === id;
+        let {accordionContent, expandedPanel} = this.state;
+        let accordionMarkup = accordionContent.map((panel) => {
+            let {header, content, id} = panel;
+            let expanded = expandedPanel === panel;
             return (
                 <AccordionItem
                     key={id}
-                    id={id}
                     header={header}
                     content={content}
-                    expand={this.expandView}
+                    id={id}
                     expanded={expanded}
+                    expandPanel={this.expandPanel}                                                        
                 />
             );
-
         });
+
 
         return (
             <div>
-                {viewsMarkup}
+                {accordionMarkup}
             </div>
         );
     }
 }
 
 function AccordionItem(props) {
-    let {expanded, header, content, id, expand} = props;
+    let {header, content, id, expanded, expandPanel} = props;
+    
     return (
         <div>
-            <h3 id={id} className={expanded ? 'accordion-header expanded' : 'accordion-header'} onClick={expand}>{header}</h3>
+            <h3 
+                id={`acc-header_${id}`} 
+                className={expanded ? 'accordion-header expanded' : 'accordion-header'}
+                onClick={expandPanel}
+            >
+                {header}
+            </h3>
             <div className={expanded ? 'accordion expanded' : 'accordion closed'}>
                 {expanded && <p className="accordion-content">{content}</p>}
             </div>
