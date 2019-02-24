@@ -1,0 +1,6 @@
+export const accordionContent = [
+    {id: '1', header: 'Content 1', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non est igitur voluptas bonum. Si verbum sequimur, primum longius verbum praepositum quam bonum. Ut pulsi recurrant? Quae diligentissime contra Aristonem dicuntur a Chryippo. Ergo hoc quidem apparet, nos ad agendum esse natos.'},
+    {id: '2', header: 'Content 2', content: 'Quis Aristidem non mortuum diligit? Idemne, quod iucunde? Cur haec eadem Democritus? Beatus sibi videtur esse moriens. Videamus animi partes, quarum est conspectus illustrior; Aliud igitur esse censet gaudere, aliud non dolere.'},
+    {id: '3', header: 'Content 3', content: 'Tum ille: Ain tandem? Duo Reges: constructio interrete. Prioris generis est docilitas, memoria; Quae cum dixisset paulumque institisset, Quid est? Quae cum dixisset, finem ille.'},
+    {id: '4', header: 'Content 4', content: 'At hoc in eo M. Et ille ridens: Video, inquit, quid agas; Quae cum dixisset paulumque institisset, Quid est? Haec quo modo conveniant, non sane intellego. Tum Piso: Quoniam igitur aliquid omnes, quid Lucius noster? Sed plane dicit quod intellegit.'},
+];
