@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+
 //import hoistStatics from 'hoist-non-react-statics'
 //import withClass, {classyWithExtra} from './functionalHOC';
 //import TabbedInterface from './TabbedInterface';
@@ -18,20 +19,18 @@ import React, {Component} from 'react';
 
 // console.log('MyCell: ', MyCell)
 import Accordion from './Accordion';
-import SortableTable from './SortableTable';
+// import SortableTable from './SortableTable';
+import NetworkRequests from './NetworkRequests';
 
 export default class App extends Component {
-    
+
     render() {
         
         return (
             <div>
                 <Accordion />
-                <SortableTable />
             </div>
         );
     }
     
 }
-
-
