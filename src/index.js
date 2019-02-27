@@ -12,6 +12,7 @@ import App from './samples/App';
 //     <App text="Some paragraph text" />, 
 //     document.getElementById('root')
 // );
+
 ReactDOM.render(
     <App />,
     document.getElementById('root')

@@ -18,17 +18,43 @@ import React, {Component} from 'react';
 // let MyOtherCell = classyWithExtra({text: 'classy'})(Cell);
 
 // console.log('MyCell: ', MyCell)
-import Accordion from './Accordion';
+// import Accordion from './Accordion';
 // import SortableTable from './SortableTable';
-import NetworkRequests from './NetworkRequests';
+// import NetworkRequests from './NetworkRequests';
+import PageTransition, {Page} from './PageTransition';
+
+let pagesData = [
+    {hText: 'headline 1', pText: 'para 1', id: '1', name: 'Page 1'},
+    {hText: 'headline 2', pText: 'para 2', id: '2', name: 'Page 2'},
+    {hText: 'headline 3', pText: 'para 3', id: '3', name: 'Page 3'},
+    {hText: 'headline 4', pText: 'para 4', id: '4', name: 'Page 4'},
+    {hText: 'headline 5', pText: 'para 5', id: '5', name: 'Page 5'}
+];
+
 
 export default class App extends Component {
 
     render() {
+        let pageNames = [];
+        let pages = pagesData.map((p) => {
+            let {id, pText, hText, name} = p;
+            pageNames.push(name);
+            return (
+                <Page 
+                    key={id} 
+                    id={id}
+                    pText={pText} 
+                    hText={hText}
+                    name={name} 
+                />
+            );
+        });
         
         return (
             <div>
-                <Accordion />
+                <PageTransition pagesArray={pageNames}>
+                    {pages}
+                </PageTransition>
             </div>
         );
     }
