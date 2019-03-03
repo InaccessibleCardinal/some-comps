@@ -18,7 +18,7 @@ function withEvents(eventName, eventHandler) {
     };
 }
 ```
-That is, `withEvent` is a `function that returns a function of an element`, which in turn puts an event listener that element and returns the element. We used it like this:
+That is, `withEvent` is a `function that returns a function of an element`, which in turn puts an event listener on that element and returns the element. We used it like this:
 ```
 withEvents('click', handler)(myElement) 
 //withEvents('click', handler) returns a function of an element
@@ -64,7 +64,9 @@ class Button {
     }
     //...etc
 ```
-Details on Function.prototype.bind can be found here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind or here for deep thinkers https://www.ecma-international.org/ecma-262/5.1/. Long story short, when you `f.bind(obj)` a function `f`, you create a copy of `f` and fix the `this` value to `obj`. For our `Button` class, we have to bind the `listener` method to `this` in the constructor if we want it to have the instance `b`'s `this` value. After binding `this`, if you inspect the `Button` instance `b` in the console you'll see something like:
+Details on Function.prototype.bind can be found here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind or here for deep thinkers https://www.ecma-international.org/ecma-262/5.1/. 
+
+Long story short, when you `f.bind(obj)` a function `f`, you create a copy of `f` and fix the `this` value to `obj`. For our `Button` class, we have to bind the `listener` method to `this` in the constructor if we want it to have the instance `b`'s `this` value. After binding `this`, if you inspect the `Button` instance `b` in the console you'll see something like:
 ```
 {listener:f, name: buttonName, element: button}
 ```
@@ -94,7 +96,7 @@ this.listener = function () {
 });
 ```
 # React
-The first React component we saw looked something like this:
+Finally some React. The first React component we saw looked something like this:
 ```
 import React from 'react';
 export default function App(props) {
@@ -131,6 +133,7 @@ That syntax is called JSX. You have to be in the scope of React to use JSX, and 
 So far, `App` just spits out some virtual DOM; it doesn't "do" anything. To make `App` do something, we'll need to leverage either `state` or `props`. We'll look at `state` first.
 
 **Make App a Class**
+
 Each React class must implement at least one method, `render`. The render method will basically be the body of the App function above:
 ```
 export default class App extends React.Component {
@@ -215,6 +218,7 @@ export default class App extends React.Component {
 Piece of cake.
 
 **A Caveat About Binding**
+
 Sometimes you'll see code like this:
 ```
 ...
