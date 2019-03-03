@@ -163,10 +163,10 @@ So when to use arrows? When you want to be concise and want to ignore the normal
 
 **Implicit "return"**
 
-Arrow functions can be used in both of the following ways. You can kick down the code 1 line and explicitly return:
+Arrow functions can be used in both of the following ways. You can use curly braces and explicitly return:
 ```
 //example D:
-let names = myArray.map((item) => {
+let names = myArray.map((item) => { 
    return item.name;
 });
 //or 
@@ -177,7 +177,7 @@ or you can "implicitly return":
 //example E:
 let names = myArray.map((item) => item.name);
 ```
-If you kick the code down or have curly braces like example D, you have to explicitly return the value. If you do it in one line *with no curly braces*, you don't write 'return'. Because JavaScript has *automatic semicolon insertion*, if you do write an arrow function in multiple lines, you will have to use curly braces. This horse is long dead. Moving on.
+If you write like example D, you have to explicitly return the value. If you do things like example E, you don't write 'return'. This horse is long dead. Moving on.
 
 # React
 Finally some React. The first React component we saw looked something like this:
