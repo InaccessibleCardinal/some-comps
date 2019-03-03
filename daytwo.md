@@ -110,7 +110,9 @@ function AccordionPanel(props) {
     );
 }
 ```
-We've also added the css classes that will make our accordion have smooth transitions between 'expanded' and 'closed' states. Expressions like this:
+We've also added the css classes that will make our accordion have smooth transitions between 'expanded' and 'closed' states. 
+
+Expressions like this:
 ```
 className={someBoolean ? nameIfTrue : nameIfFalse}
 ```
