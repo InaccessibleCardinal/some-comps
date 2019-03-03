@@ -53,6 +53,7 @@ Doing this, we get a `<button>Some Button Text</button>` in the DOM. Our button 
 >The `this` keyword is ambiguous in JavaScript. It depends on the context in which a function is called.
 
 There are a number of fixes, some better than others. 
+
 **The standard fix:**
 ```
 class Button {
