@@ -161,6 +161,7 @@ var argumentInspector = function() {
 So when to use arrows? When you want to be concise and want to ignore the normal behavior `this` has in functions/methods and you don't need the `arguments` object. 
 
 **Implicit "return"**
+
 Arrow functions can be used in both of the following ways. You can kick down the code 1 line and explicitly return:
 ```
 //example D:
