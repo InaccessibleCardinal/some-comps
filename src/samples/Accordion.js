@@ -13,8 +13,8 @@ export default class Accordion extends Component {
         this.expandPanel = this.expandPanel.bind(this);    
     }
 
-    expandPanel(id) {
-        
+    expandPanel(e) {
+        let id = e.target.id.replace('acc-header_', '');
         let panelToExpand = this.state.accordionContent.find((panel) => panel.id === id);
         this.setState({
             expandedPanel: panelToExpand
@@ -34,7 +34,7 @@ export default class Accordion extends Component {
                     content={content}
                     id={id}
                     expanded={expanded}
-                    expandPanel={this.expandPanel.bind(null, id)}                                                        
+                    expandPanel={this.expandPanel}                                                        
                 />
             );
         });
