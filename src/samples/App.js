@@ -1,80 +1,140 @@
 import React from 'react';
-
+//import Accordion from './Accordion';
+//import Counter from './Counter';
+import axios from 'axios';
 
 export default class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            counter: 0,
-            show: false, 
-            loading: true
-        };
-        this.addToCounter = this.addToCounter.bind(this);
-    }
+
+    state = {users: [], loading: true, errorMessage: ''};
 
     componentDidMount() {
-        setTimeout(() => {
-            this.setState({loading: false})
-        }, 3000);
-    }
+        //make svc call by using
+        
+    getUsersThenPosts()
+    .then((result) => {
+        
+        let {users, posts: p} = result;
+        console.log('users: ', p)
+        
 
-    addToCounter() {
-        let {counter, show} = this.state;
-        counter += 1;
-        show = (counter % 2 === 1) ? true : false;
-        this.setState({counter, show});
-    }
+    })
+    .catch((e) => console.log(e))
 
-    makeStuff() {
-        return (
-            <p>More stuff</p>
-        );
+    
+
     }
 
     render() {    
-        let {counter, show, loading} = this.state;
-        let text = 'Add to Counter';
-        let h = this.addToCounter;
+        let {users, loading, errorMessage} = this.state;
 
         return (
             <div>
-                <button onClick={h}>{text}</button>
-                <p>{counter}</p>
-                {show && this.makeStuff()}
-                {loading && <Loader />}
+                {users.length ?
+                    <UsersList users={users} />
+                    :
+                    <p>{errorMessage}</p>
+                }
+               <Loader isActive={loading} />
             </div>
         );
     }
 }
 
-const loaderStyle = {
-    backgroundColor: 'grey',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    zIndex: 2,
-    height: '100%',
-    width: '100%' 
+
+function Loader({isActive}) {
+    if (isActive) {
+        return (
+            <div className="loader-container">
+                <div className="loader" />
+            </div>
+        )
+    } else {
+        return null;
+    }
 }
 
-function Loader(props) {
+function UsersList({users}) {
+    let usersMarkup = users.map((u) => {
+        return (
+            <li key={u.id}>
+                <UserCard user={u} />
+            </li>
+        );
+    });
 
     return (
-        <div style={loaderStyle}>
-            <h1>LOADING...</h1>
+        <ul style={{listStyle: 'none', margin: 0, padding: 0}}>
+            {usersMarkup}
+        </ul>
+    );
+}
+
+function UserCard({user}) {
+    let {id, name, username, email, phone, website} = user;
+
+    return (
+        <div style={{border: '1px solid', padding: '15px'}}>
+            <h2>User {id}: </h2>
+            <h3>Name: {name}</h3>
+            <p>Username: {username}</p>
+            <p>E-Mail: {email}</p>
+            <p>Phone: {phone}</p>
+            <p>Website: {website}</p>
+            <hr />
+            <UserPosts />  
+        </div>
+    );
+
+}
+
+function UserPosts({posts}) {
+    return (
+        <div>
+            <h3>User Posts:</h3>
+            <ul>
+                <li>Posts will go in here</li>    
+            </ul>
         </div>
     );
 }
 
-let x = [1,2,3,4].map((number, index, arr) => {
-    console.log('arr: ', arr)
-    console.log('index: ', index)
-    return {
-        id: Math.random(),
-        name: number
-    };
-})
-.filter((wackyObject) => wackyObject.name % 2 === 0)
-.reduce((prev, curr) => prev.name + curr.name);
+function makeGetRequest(url) {
+    return axios.get(url);
+}
 
-console.log('X! ', x)
+function getUsersThenPosts() {
+    let usersUrl = 'https://jsonplaceholder.typicode.com/users';
+    let postsUrlRoot = 'https://jsonplaceholder.typicode.com/posts';
+    let users;
+
+    function thunkAll(promiseArray) {
+        return Promise.all(
+                promiseArray.map((p) => {
+                    return p.then((r) => r.data).catch((e) => e);   
+                })
+            )
+            .then((values) => values).catch((e) => e);
+    }
+
+    return new Promise((resolve, reject) => {
+
+        makeGetRequest(usersUrl)
+            .then((r) => {
+                let {data} = r;
+                users = data;
+                let postsPromises = data.map((user, i) => {
+                    let postsUrl = `${postsUrlRoot}?userId=${user.id}`;
+                    return makeGetRequest(postsUrl);
+                });
+
+                resolve({
+                    users,
+                    posts: thunkAll(postsPromises)
+                   
+                })
+                
+            }).catch((e) => {
+                reject(e);
+            })
+    });
+}
