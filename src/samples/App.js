@@ -8,20 +8,28 @@ export default class App extends React.Component {
     state = {users: [], loading: true, errorMessage: ''};
 
     componentDidMount() {
-        //make svc call by using
-        
-    getUsersThenPosts()
-    .then((result) => {
-        
-        let {users, posts: p} = result;
-        console.log('users: ', p)
-        
+        this.getTodos();
+        getUsersThenPosts()
+            .then(({responses}) => {
+                
+                responses.then((data) => {
+                    let {users, posts} = data;
+                    let usersWithPosts = users.map((user) => {
+                        return {
+                            ...user,
+                            userPosts: posts.filter((post) => post.userId === user.id)
+                        };
+                    });
 
-    })
-    .catch((e) => console.log(e))
+                    this.setState({users: usersWithPosts, loading: false});
 
-    
+                }); 
+            });
+    }
 
+    async getTodos() {
+        let todos = await makeGetRequest('https://jsonplaceholder.typicode.com/todos');
+        console.log('TODOS! ', todos.data);
     }
 
     render() {    
@@ -70,7 +78,7 @@ function UsersList({users}) {
 }
 
 function UserCard({user}) {
-    let {id, name, username, email, phone, website} = user;
+    let {id, name, username, email, phone, website, userPosts} = user;
 
     return (
         <div style={{border: '1px solid', padding: '15px'}}>
@@ -81,18 +89,33 @@ function UserCard({user}) {
             <p>Phone: {phone}</p>
             <p>Website: {website}</p>
             <hr />
-            <UserPosts />  
+            <UserPosts posts={userPosts} />  
         </div>
     );
 
 }
 
 function UserPosts({posts}) {
+    
+    let postsMarkup;
+    if (posts.length) {
+        postsMarkup = posts.map((p) => {
+            let {id, title, body} = p;
+            return (
+                <li key={id}>
+                    <h4>{title}</h4>
+                    <p>{body}</p>
+                </li>
+            );
+        });
+    } else {
+        postsMarkup = <p>There was an error getting this user's posts.</p>
+    }
     return (
         <div>
             <h3>User Posts:</h3>
-            <ul>
-                <li>Posts will go in here</li>    
+            <ul style={{listStyle: 'none'}}>
+                {postsMarkup}   
             </ul>
         </div>
     );
@@ -107,31 +130,41 @@ function getUsersThenPosts() {
     let postsUrlRoot = 'https://jsonplaceholder.typicode.com/posts';
     let users;
 
-    function thunkAll(promiseArray) {
+    function thunkAll(promiseArray, users) {
+        let payload = {users, posts: []};
         return Promise.all(
                 promiseArray.map((p) => {
                     return p.then((r) => r.data).catch((e) => e);   
                 })
-            )
-            .then((values) => values).catch((e) => e);
+            ).then((values) => {
+                return values.reduce((acc, curr) => {
+
+                payload.posts = payload.posts.concat(curr)
+                return payload;
+                
+            }, payload);
+        });
+        
     }
 
     return new Promise((resolve, reject) => {
 
         makeGetRequest(usersUrl)
             .then((r) => {
+                
                 let {data} = r;
                 users = data;
                 let postsPromises = data.map((user, i) => {
                     let postsUrl = `${postsUrlRoot}?userId=${user.id}`;
+                    if (i === 3 || i === 1) {
+                        postsUrl = 'x';
+                    }
                     return makeGetRequest(postsUrl);
                 });
 
                 resolve({
-                    users,
-                    posts: thunkAll(postsPromises)
-                   
-                })
+                    responses: thunkAll(postsPromises, users)   
+                });
                 
             }).catch((e) => {
                 reject(e);
