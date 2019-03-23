@@ -31,6 +31,7 @@ export function makeGetRequest(url) {
 ```
 The trouble is `makeGetRequest` doesn't actually return the `users` the `Users` component wants, and it can't because the `request` object is *asynchronous*. How can we expose the data that is only available *after* `request.onload` to other modules like our `Users` component?
 
+
 **Solution 1: Use a callback**
 
 We could have makeGetRequest return a function of a callback:
@@ -82,7 +83,7 @@ That's better, but what if that `successCallBack` needs to make more network cal
                 //do something with the ssn
                 makeGetRequest(isUserATaxCheatUrl)((taxResp) => {
                     makePostRequest(letTheIRSKnowUrl)((irsResp) => {
-                        makePostRequest(callTaxPoliceUrl)((policeResp) => ...blah)
+                        makePostRequest(callPoliceUrl)((policeResp) => ...blah)
                     });
                 });
             });
@@ -94,6 +95,7 @@ That's better, but what if that `successCallBack` needs to make more network cal
 ```
 Now we're building a pyramid of doom that no one wants to reason about. 
 
+
 **Our Solution: Promises**
 
 A promise is an object that represents the eventual completion of an asyncronous computation or process. A promise can be in 1 of three possible states, `pending`, `fulfilled` or `rejected`, and a promise will go from `pending` to `fulfilled` only once, or from `pending` to `rejected` only once, and it will never do both. This makes a promise *predictable*.  
@@ -102,7 +104,7 @@ Any time you have a function that does something asyncronously, like making a ne
 ```
 export function makeGetRequest(url) {
     return new Promise((resolve, reject) => {
-    //in that xhr code above, just resolve(value) with the value you want on success
+    //in that XMLHttpRequest code above, just resolve(value) with the value you want on success
     //and reject(someReason) with some reason on failure
     });
 }
@@ -171,6 +173,7 @@ We'll go over features of the library as we encounter them. For now, this is a g
 
 From the ecmascript language spec (https://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects):
 >A promise p is fulfilled if p.then(f, r) will immediately enqueue a Job to call the function f.
+
 >A promise p is rejected if p.then(f, r) will immediately enqueue a Job to call the function r.
 
 This means that the `catch` block in
