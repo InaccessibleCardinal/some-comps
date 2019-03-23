@@ -3,11 +3,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-import App from './samples/App';
-import AutoComplete from './samples/AutoComplete';
+import AppWithModal from './samples/AppWithModal';
+//import AutoComplete from './samples/AutoComplete';
+
 
 ReactDOM.render(
-    <AutoComplete />,
+    
+    <AppWithModal />,
     document.getElementById('root')
 );
 

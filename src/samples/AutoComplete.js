@@ -1,6 +1,5 @@
 import React from 'react';
 import {words} from './words';
-import { timingSafeEqual } from 'crypto';
 
 export default class AutoComplete extends React.Component {
     constructor(props) {
