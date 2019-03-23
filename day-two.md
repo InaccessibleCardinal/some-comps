@@ -29,9 +29,10 @@ export function makeGetRequest(url) {
     request.send();
 }
 ```
-The trouble is makeGetRequest doesn't actually return the `users` the `Users` component wants, and it can't because the `request` object is *asynchronous*. How can we expose the data that is only available *after* `request.onload` to other modules like our `Users` component?
+The trouble is `makeGetRequest` doesn't actually return the `users` the `Users` component wants, and it can't because the `request` object is *asynchronous*. How can we expose the data that is only available *after* `request.onload` to other modules like our `Users` component?
 
 **Solution 1: Use a callback**
+
 We could have makeGetRequest return a function of a callback:
 ```
 export function makeGetRequest(url) {
@@ -94,6 +95,7 @@ That's better, but what if that `successCallBack` needs to make more network cal
 Now we're building a pyramid of doom that no one wants to reason about. 
 
 **Our Solution: Promises**
+
 A promise is an object that represents the eventual completion of an asyncronous computation or process. A promise can be in 1 of three possible states, `pending`, `fulfilled` or `rejected`, and a promise will go from `pending` to `fulfilled` only once, or from `pending` to `rejected` only once, and it will never do both. This makes a promise *predictable*.  
 
 Any time you have a function that does something asyncronously, like making a network call, it's a good opportunity to use a promise, ex:
@@ -166,6 +168,7 @@ axios.put(url, body, options)
 We'll go over features of the library as we encounter them. For now, this is a great resource: https://kapeli.com/cheat_sheets/Axios.docset/Contents/Resources/Documents/index.
 
 **A Note on p.then()**
+
 From the ecmascript language spec (https://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects):
 >A promise p is fulfilled if p.then(f, r) will immediately enqueue a Job to call the function f.
 >A promise p is rejected if p.then(f, r) will immediately enqueue a Job to call the function r.
