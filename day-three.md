@@ -86,7 +86,7 @@ Works so long as those variable names match what you called them when you declar
 
 **What if `Promise.all` encounters an error?**
 
-That would be below average, but it can happen and the best thing to do about it depends a bit on how everyone wants your app to behave. For example, if its decided that the app should shut down and throw up a trap door message if **any** of these apis fail, then something like this is probably fine:
+That would be below average, but it can happen and the best thing to do about it depends a bit on how everyone wants your app to behave. For example, if it's decided that the app should shut down and throw up a trap door message if **any** of these apis fail, then something like this is probably fine:
 ```
 ...etc.
 .then(values => {
@@ -278,11 +278,13 @@ That is, **Answer 2** *returns a promise*, so that you can address the ssnRespon
 
 **How to Handle Setting State**
 
-This is a good question, and the answer probably depends on what your app needs to do. It's worth thinking about because `setState` triggers re-rendering, which isn't cheap. Let's say your component cannot function without each piece of data from your promise chain. Then you might want to postpone setting state until the last piece of data arrives, e.g.:
+This is a good question, and the answer probably depends on what your app needs to do. It's worth thinking about because `setState` triggers re-rendering, which isn't cheap (There is a bit of an elephant in the room regarding the way we've been setting state, but that's a different story and we'll address it in upcoming classes).
+
+Let's say your component *can't function* without each piece of data from your promise chain. Then you could postpone setting state until the last piece of data arrives, e.g.:
 ```
 ...etc.
     componentDidMount() {
-        let updates = {}; //put response date in this object
+        let updates = {}; //put response data in this object
         axios.get(userUrl)
         .then(userResponse => {
             let user = userResponse.data;
@@ -324,9 +326,11 @@ componentDidMount() {
     
 }
 ```
+Repeatedly setting state like this is a bad idea. React does try to batch your changes, and the way it works differs depending on the version of the library you are using, but rather than relying on react to clean up after you, it's usually best to try to meet react halfway by batching your own changes. 
+
 **.finally**
 
-The following might be useful as an alternative:
+The following might be useful as an alternative, which also works if your component *requires each piece of data*:
 ```
 componentDidMount() {
     let updates = {};
@@ -343,9 +347,11 @@ componentDidMount() {
         updates.key_n = r_n.data;
     })
     .catch(...)
-    .finally(() => {
+    .finally(() => { 
+        //.finally **doesn't take any parameters**
+        //but we don't need any parameters because our 'updates' object is in the closure:
         this.setState({...updates});
     });
 }
 ```
-Yes, there is a `.finally` method that will run after all the promises in your chain have settled. You'll at least get data from promises in the chain *up until the one that rejected*, which might be better than nothing. `finally` could also be used in conjunction with the `Promise.all` examples above...whether it'll be useful depends on what you need to do.
+Yes, there is a `.finally` method that will run after all the promises in your chain have settled. You'll at least get data from promises in the chain *up until the one that rejected*, which might be better than nothing. `finally` could also be used in conjunction with the `Promise.all` examples above.
